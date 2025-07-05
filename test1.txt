@@ -1,0 +1,12 @@
+gloss	split	video_id	signer_id	variation_id
+computer	test	12320	59	1
+computer	test	67519	109	1
+go	test	24857	9	0
+go	test	67715	109	0
+go	test	24951	20	0
+clothes	test	11305	9	0
+clothes	test	11311	59	0
+clothes	test	11315	5	0
+who	test	63219	9	0
+who	test	63226	36	0
+who	test	63233	14	0
