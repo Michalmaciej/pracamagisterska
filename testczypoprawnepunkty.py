@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-# === Ustawienia ===
 VIDEO_ID = '17722'
 VIDEO_PATH = rf'C:\Users\michk\Desktop\WLASL2000\{VIDEO_ID}.mp4'
 CSV_OUTPUT = f"landmarks_debug_{VIDEO_ID}.csv"
@@ -16,7 +15,6 @@ NUM_POSE = 33
 NUM_HAND = 21
 NUM_FACE = len(IMPORTANT_FACE_LANDMARKS)
 
-# === Przetwarzanie i zapis wideo oraz CSV ===
 cap = cv2.VideoCapture(VIDEO_PATH)
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -42,7 +40,7 @@ with mp_pose.Pose() as pose, mp_hands.Hands(max_num_hands=2) as hands, mp_face.F
 
         frame_features = []
 
-        # Pose
+        #Pose
         if res_pose.pose_landmarks:
             for lm in res_pose.pose_landmarks.landmark:
                 x, y = lm.x, lm.y
@@ -52,7 +50,7 @@ with mp_pose.Pose() as pose, mp_hands.Hands(max_num_hands=2) as hands, mp_face.F
         else:
             frame_features += [0.0, 0.0] * NUM_POSE
 
-        # Hands
+        #Hands
         hands_list = res_hands.multi_hand_landmarks if res_hands.multi_hand_landmarks else []
         for i in range(2):
             if i < len(hands_list):
@@ -64,7 +62,7 @@ with mp_pose.Pose() as pose, mp_hands.Hands(max_num_hands=2) as hands, mp_face.F
             else:
                 frame_features += [0.0, 0.0] * NUM_HAND
 
-        # Face
+        #Face
         if res_face.multi_face_landmarks:
             for i in IMPORTANT_FACE_LANDMARKS:
                 lm = res_face.multi_face_landmarks[0].landmark[i]
@@ -82,14 +80,12 @@ with mp_pose.Pose() as pose, mp_hands.Hands(max_num_hands=2) as hands, mp_face.F
 cap.release()
 out.release()
 
-# === Zapis CSV ===
 num_features = (NUM_POSE + 2 * NUM_HAND + NUM_FACE) * 2
 header = ['frame_index'] + [f'f{i+1}' for i in range(num_features)]
 df = pd.DataFrame(rows, columns=header)
 df.to_csv(CSV_OUTPUT, index=False)
-print(f"✅ Zapisano: {CSV_OUTPUT}, {VIDEO_OUTPUT}")
+print(f"Zapisano: {CSV_OUTPUT}, {VIDEO_OUTPUT}")
 
-# === Animacja z CSV ===
 data = pd.read_csv(CSV_OUTPUT)
 frames = data.shape[0]
 coords = data.iloc[:, 1:].values.reshape(frames, -1, 2)
